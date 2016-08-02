@@ -1,7 +1,6 @@
 import pickle
 import numpy as np
 
-
 def X_y_split(split_number, matrix):
     '''SPLIT NUMBER = 32: This splits the bass line in 2 equal halves:
     The first 32 16ths determine the 33rd 16th note then moves down
@@ -22,7 +21,6 @@ def X_y_split(split_number, matrix):
     X_array = np.array(X_list)
     y_array = np.array(y_list)
     return X_array, y_array
-
 
 if __name__ == '__main__':
 

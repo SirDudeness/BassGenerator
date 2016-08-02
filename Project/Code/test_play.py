@@ -17,8 +17,6 @@ def play_music(music_file):
         # check if playback has finished
         clock.tick(30)
 
-
-
 def playback(music_file):
     # pick a midi music file you have ...
     # (if not in working folder use full path)
@@ -39,7 +37,6 @@ def playback(music_file):
         pygame.mixer.music.stop()
         raise SystemExit
 
-
 def test_track(filepath, output_name):
     pre_pattern = midi.read_midifile(filepath)
     print pre_pattern
@@ -47,12 +44,14 @@ def test_track(filepath, output_name):
     play.playback(filepath)
 
     test_matrx = m2m.mid_to_matrix(filepath)
+
     #print test_matrx
     m2m.matrix_to_mid(test_matrx, name=output_name)
     post_pattern = midi.read_midifile('{}.mid'.format(output_name))
+
     #print post_pattern
     play.playback('{}.mid'.format(output_name))
-    #play.playback("../Funk_Bass_RAW/Voyager.mid")
+
 
 
 if __name__ == '__main__':

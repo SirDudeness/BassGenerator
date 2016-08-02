@@ -24,8 +24,10 @@ def mid_to_matrix(folder, midi_file, num_steps, divide_features=False):
             note_event_list.append(track)
 
     sixteenth_unit = 24
+
     #build matrix
     matrix = [[0, 0, 0] for _ in xrange(num_steps)]
+
     #If divide features
     pitch_mtrx = [0 for _ in xrange(num_steps)]
     length_mtrx = [0 for _ in xrange(num_steps)]
@@ -58,6 +60,7 @@ def mid_to_matrix(folder, midi_file, num_steps, divide_features=False):
                 else:
                     i_length += note_event_list[i].tick
                     i += 1
+
             #Append Note On Event to matrix
             if divide_features == False:
                 matrix[rhythm_posn] = [on_note, note_length, event.velocity]
@@ -65,6 +68,7 @@ def mid_to_matrix(folder, midi_file, num_steps, divide_features=False):
                 pitch_mtrx[rhythm_posn] = on_note
                 length_mtrx[rhythm_posn] = note_length
                 velocity_mtrx[rhythm_posn] = event.velocity
+
         #Note Off Event
         else:
             pass
@@ -95,6 +99,7 @@ def feature_divide(matrix):
 
 def matrix_to_mid(matrix, name='example', BPM=55):
     '''Converts midi matrix back in a midi file so it can be played'''
+
     pattern = midi.Pattern()
     track = midi.Track()
     pattern.append(track)
@@ -140,12 +145,10 @@ def matrix_to_mid(matrix, name='example', BPM=55):
             except IndexError:
                 off_tick = length
 
-
             #Add off event
             off = midi.NoteOffEvent(tick=off_tick, velocity=velocity, pitch=note)
             track.append(off)
             event_tick_total += off_tick
-
 
     eot = midi.EndOfTrackEvent(tick=tickscale*4)
     track.append(eot)
@@ -158,14 +161,13 @@ def matrix_to_mid(matrix, name='example', BPM=55):
 
 
 if __name__ == '__main__':
-    #test_matrx = mid_to_matrix('FEBass58_105Ab.mid')
+
     pitch_mtrx, length_mtrx, velocity_mtrx = mid_to_matrix('Funk_Bass_Ready','FantasticVoyage.mid', 64, divide_features=True)
+
     p_norm = mb.normalize_input(pitch_mtrx, 'pitch')
     l_norm = mb.normalize_input(length_mtrx, 'length')
     v_norm = mb.normalize_input(velocity_mtrx, 'velocity')
-    test_matrx = feature_combine(p_norm, l_norm, v_norm)
-    print test_matrx
-    # print pitch_mtrx
-    # print length_mtrx
-    # print velocity_mtrx
-    # # print matrix_to_mid(test_matrx, name='example2')
+
+    funk_matrx = feature_combine(p_norm, l_norm, v_norm)
+
+    print funk_matrx

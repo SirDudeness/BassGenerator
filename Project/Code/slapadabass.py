@@ -12,6 +12,7 @@ from keras.models import model_from_json
 def slapadabass(midi_file, num_steps, output_length, version, preround=False):
     '''This function will generate a midi_file to be played'''
 
+    #File path where you want to pull your initiation bass lines
     start_fpath = 'Start_Lines'
 
     #Get bass line into matrix form and seperate to normalize each value type
@@ -46,6 +47,7 @@ def slapadabass(midi_file, num_steps, output_length, version, preround=False):
         if preround == True:
             #Split
             p_mtrx, l_mtrx, v_mtrx = m2m.feature_divide(next_step)
+
             #Denormalize each feature
             p_denorm = model_build.denormalize_output(p_mtrx, 'pitch')
             l_denorm = model_build.denormalize_output(l_mtrx, 'length')
@@ -89,34 +91,11 @@ def convert_output(bass_line, version, bass_input):
     #Convert to a midi file
     m2m.matrix_to_mid(bass_matrix, name='bass{}_model{}'.format(bass_input, version), BPM=55)
 
+def gen_line(model_num=14, input_bass=1, output_length=128):
+    # Generate bass line from specified model
+    bass_line = slapadabass('test_input{}.mid'.format(input_bass), 32, output_length, model_num, preround=False)
+    convert_output(bass_line, model_num, input_bass)
 
 if __name__ == '__main__':
 
-
-
-    # Generate bass line from specified model
-    model_num = 114
-    input_bass = 7
-    bass_line = slapadabass('test_input{}.mid'.format(input_bass), 32, 128, model_num, preround=False)
-    convert_output(bass_line, model_num, input_bass)
-
-
-
-
-    # # Generate bass line
-    # bass_line = slapadabass('test_input1.mid', 32, 128)
-    #
-    # #Split
-    # p_mtrx, l_mtrx, v_mtrx = m2m.feature_divide(bass_line)
-    # #Denormalize each feature
-    # p_denorm = model_build.denormalize_output(p_mtrx, 'pitch')
-    # l_denorm = model_build.denormalize_output(l_mtrx, 'length')
-    # v_denorm = model_build.denormalize_output(v_mtrx, 'velocity')
-    #
-    # # Combine
-    # bass_matrix = m2m.feature_combine(p_denorm, l_denorm, v_denorm)
-    # #Convert to a midi file
-    # m2m.matrix_to_mid(bass_matrix, name='bass1_model9', BPM=55)
-    #
-    # #test file
-    # #test_track('../Output_Lines/FEBass35_115G.mid', 'tester')
+    gen_line(model_num=14, input_bass=1)

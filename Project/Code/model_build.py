@@ -139,18 +139,19 @@ def build_data():
 
 
 
-def grid_search(create_midi=True):
+def grid_search(create_midi=True, validate=False):
 
-    training_model = 114
-    grid_search_num = 10
+    iterate = True
+    training_model = 0
+    grid_search_num = 11
 
-    epoch_list = [50]
+    epoch_list = [25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25, 25]
     RNN_list = [LSTM]
     optimizers = ['RMSprop']
-    neurons = [32]
+    neurons = [128]
 
-    save_version = 118
-    input_basses = [1, 2, 3]
+    save_version = 119
+    input_basses = [1, 2, 3, 4, 5, 6]
     output_length = 128
 
     fig = plt.figure(figsize=(20, 20))
@@ -159,7 +160,7 @@ def grid_search(create_midi=True):
         for arch in RNN_list:
             for opt in optimizers:
                 for n in neurons:
-                    if training_model > 0:
+                    if iterate == True:
                         # Load weights from specified model
                         loaded_model = load_prior_model(training_model=training_model)
                         loaded_model.compile(loss={'p_l_v': 'mean_squared_error'}, optimizer=opt)
@@ -173,21 +174,31 @@ def grid_search(create_midi=True):
                         model_json = loaded_model.to_json()
                         with open('../Models/model{}.json'.format(save_version), 'w') as json_file:
                             json_file.write(model_json)
+
+                        training_model = save_version
                     else:
                         history = run_model(size=32, grid_search = True, cell=arch, neurons=n,\
                                             epochs=epochs, version=save_version, optimize_type=opt, plot=False)
 
                     train_losses = history.history['loss']
-                    #val_losses = history.history['val_loss']
+
                     epoch_list = range(1, len(train_losses)+1)
 
-                    #min_val = round(min(val_losses), 4)
-                    #min_val_epoch = np.argmin(val_losses)+1
+                    if validate == True:
+                        val_losses = history.history['val_loss']
+                        min_val = round(min(val_losses), 4)
+                        min_val_epoch = np.argmin(val_losses)+1
+                    else:
+                        pass
 
                     #Plotting
                     sub = fig.add_subplot(4,4,i)
                     sub.plot(epoch_list, train_losses, marker='.', label = 'Train Loss')
-                    sub.plot(epoch_list, val_losses, marker='.', label = 'Val Loss')
+                    if validate == True:
+                        sub.plot(epoch_list, val_losses, marker='.', label = 'Val Loss')
+                    else:
+                        pass
+
                     plt.legend(loc = 'upper right')
 
                     i += 1
@@ -200,7 +211,7 @@ def grid_search(create_midi=True):
                     sub.set_title('{}, {}, and {} neurons'.format(arch_name, opt, n))
                     plt.xlabel('Epochs')
                     plt.ylabel('Mean Squared Error')
-                    plt.ylim(0, 0.6)
+                    plt.ylim(0, 1)
 
                     if create_midi == True:
                         for bass in input_basses:
@@ -229,7 +240,7 @@ def build_RNN(input_length, grid_search=False, cell=None, neurons=None, optimize
     else:
         layer = LSTM(128, return_sequences=True)(bars)
         #layer = GRU(2, return_sequences=True)(layer)
-        layer = LSTM(128, return_sequences=False)(bars)
+        layer = LSTM(128, return_sequences=False)(layer)
         #layer = LSTM(64, return_sequences=False)(layer)
 
     p_l_v = Dense(3, activation='linear', name='p_l_v')(layer)
@@ -239,7 +250,7 @@ def build_RNN(input_length, grid_search=False, cell=None, neurons=None, optimize
     return model
 
 
-def fit_model(model, num_epoch):
+def fit_model(model, num_epoch, validate=False):
     print 'Prepping Model...'
     pitch_matrix = pickle.load(open('pitch_matrix', 'rb'))
     length_matrix = pickle.load(open('length_matrix', 'rb'))
@@ -256,11 +267,19 @@ def fit_model(model, num_epoch):
     #Splits all 208 bass lines into X (32 1/16th note) and a y (the 33rd 1/16th note)
     X, y = target.X_y_split(32, merged_norm)
 
-    # #Create validation X and y
-    # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
-
+    # Create validation X and y
+    if validate == True:
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
+        X_test = X[:641]
+        y_test = y[:641]
+        X_train = X[641:]
+        y_train = y[641:]
+        validation_data=(X_test, y_test)
+        model.fit(X, y, batch_size=32, nb_epoch=num_epoch, validation_data=(X_test, y_test))
     # Fit model
-    model.fit(X, y, batch_size=32, nb_epoch=num_epoch)
+    else:
+        model.fit(X, y, batch_size=32, nb_epoch=num_epoch)
+
     history = model.history
     return history
 
@@ -328,25 +347,22 @@ def load_prior_model(training_model=0):
     json_file.close()
     loaded_model = model_from_json(loaded_model_json)
 
-    # load weights into new model
+    #load weights into new model
     loaded_model.load_weights('../Models/model_weights{}.h5'.format(training_model))
     print('Loaded model from disk')
 
     return loaded_model
 
+def load_arch(training_model=0):
+    '''Get summary of specific model architecture'''
+
+    json_file = open('../Models/model{}.json'.format(training_model), 'r')
+    loaded_model_json = json_file.read()
+    json_file.close()
+    loaded_model = model_from_json(loaded_model_json)
+    loaded_model.summary()
+
 
 if __name__ == '__main__':
 
-    grid_search(create_midi=True)
-
-    # #Run specific model and produce midi
-    # version = 118
-    #
-    # history = run_model(size=32, grid_search=False, cell=None, neurons=1, epochs=400, version=version, optimize_type='RMSprop', plot=False)
-    # bass_lines = [4, 5, 6]
-    # for line in bass_lines:
-    #     bass_line = slap.slapadabass('test_input{}.mid'.format(line), 32, 128, version)
-    #     slap.convert_output(bass_line, version, line)
-
-    # test
-    #loaded_model = load_prior_model(training_model=41)
+    load_arch(training_model=114)
