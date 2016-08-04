@@ -58,4 +58,9 @@ The current architecture I'm using for my model:
 * RMSprop optimization
 * 500 epochs
 
-![](../Music_Samples/Bass1_Model114.mp3)
+
+<audio controls="controls">
+  <source type="audio/mp3" src="./Music_Samples/Bass1_Model114.mp3"></source>
+  <source type="audio/ogg" src="./Music_Samples/Bass1_Model114.ogg"></source>
+  <p>Your browser does not support the audio element.</p>
+</audio>
