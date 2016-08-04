@@ -58,4 +58,4 @@ The current architecture I'm using for my model:
 * RMSprop optimization
 * 500 epochs
 
-![](../Music_Samples/Bass1_Model114.wav)
+![](../Music_Samples/Bass1_Model114.mp3)
