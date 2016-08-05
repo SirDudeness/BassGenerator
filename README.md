@@ -67,6 +67,10 @@ Now that we have our bass lines into the correct format, we beginning dividing u
 &nbsp;
 
 I parse through the entire bass line one step at a time, generating input output pairs. This is repeated for all bass lines in my training set.
+&nbsp;
+
+
+## Model
 
 Below is an oversimplified diagram of a recurrent neural network.
 
