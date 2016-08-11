@@ -72,6 +72,9 @@ I parse through the entire bass line one step at a time, generating input output
 
 ## Model
 
+To build the model, I used the Keras library for recurrent neural networks. See link:
+https://keras.io/
+
 Below is an oversimplified diagram of a recurrent neural network.
 
 <img src="./Images/RNN.png" align="left">
