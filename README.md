@@ -1,7 +1,11 @@
-# BassGenerator
+<img src="./Images/Title.png" align="left">
+&nbsp;
 ### Funk Bass with Recurrent Neural Nets
 
 This code is part of a project to train a generative model to create original funk bass. The training data consisted of 208 funk bass lines in 4 measure segments, 4/4 time signature, and in a midi format.
+
+Follow the link for a sample output:
+https://soundcloud.com/user-388285621/bass-1-model-71
 
 ## Midi Tools
 
@@ -77,7 +81,7 @@ https://keras.io/
 
 Below is an oversimplified diagram of a recurrent neural network.
 
-<img src="./Images/RNN.png" align="left">
+<img src="./Images/RNN2.png" align="left">
 &nbsp;
 
 My input X's being my 32 time step input sequences, and my Xt+2 being the next time step after each input sequence. The network will seek to learn the quantitative relationship between inputs sequences and their corresponding outputs.
