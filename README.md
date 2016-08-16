@@ -4,7 +4,7 @@
 
 This code is part of a project to train a generative model to create original funk bass. The training data consisted of 208 funk bass lines in 4 measure segments, 4/4 time signature, and in a midi format.
 
-Follow the link for a sample output:
+**Follow the link for a sample output:**
 https://soundcloud.com/user-388285621/bass-1-model-71
 
 ## Midi Tools
