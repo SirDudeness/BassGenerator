@@ -1,0 +1,51 @@
+# Ignore midi folders
+Project/Classical\ Piano\ Midi\ RAW
+
+Project/Funk_Bass_RAW
+
+Project/Funk_Bass_Ready
+
+Project/Midi_files
+
+Project/midi-0.2.1
+
+Project/midiparser
+
+Project/Output
+
+Project/Start_Lines
+
+Project/Images
+
+Project/Music_Samples
+
+# Ignore plots
+Project/Grid_Search
+
+Project/Grid_Search_100epochs
+
+Project/Model_Plots
+
+# Ignore Models
+Project/Models
+
+# Ignore miscellaneous
+Project/project_proposals
+
+Project/Proposals
+
+
+# Ignore file types
+*.mid
+*.csv
+*.pyc
+*.xlsx
+
+
+Project/Code/length_matrix
+Project/Code/length_max_min
+Project/Code/midi_matrix
+Project/Code/pitch_matrix
+Project/Code/pitch_max_min
+Project/Code/velocity_matrix
+Project/Code/velocity_max_min
